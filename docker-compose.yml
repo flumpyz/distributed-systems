@@ -40,10 +40,10 @@ services:
     image: rabbitmq:management
     hostname: rabbit
     ports:
-      - 15671:15671
-      - 15672:15672
-      - 5671:5671
-      - 5672:5672
+      - "15671:15671"
+      - "15672:15672"
+      - "5671:5671"
+      - "5672:5672"
     environment:
       RABBITMQ_DEFAULT_USER: myuser
       RABBITMQ_DEFAULT_PASS: myuserpassword

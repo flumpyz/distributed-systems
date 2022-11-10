@@ -21,13 +21,13 @@ def handle_message(ch, method, properties, body):
     web_response.raise_for_status()
 
 
-
 def main():
     connection = pika.BlockingConnection(pika.URLParameters(os.environ['RABBITMQ_URL']))
     channel = connection.channel()
     channel.queue_declare(queue=QUEUE_NAME)
     channel.basic_consume(queue=QUEUE_NAME, auto_ack=True, on_message_callback=handle_message)
-    channel.stop_consuming()
+    channel.start_consuming()
+
 
 if __name__ == '__main__':
     try:
