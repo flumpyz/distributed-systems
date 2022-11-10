@@ -1,17 +1,23 @@
+import json
+import os
+
 import models
-# import pika
+import pika
 
 QUEUE_NAME = 'links'
 
 
-def send_message_to_queue_1(link: models.Link):
-    return None
-    # connection = pika.BlockingConnection(
-    #     pika.ConnectionParameters(host='localhost'))
-    # channel = connection.channel()
-    #
-    # channel.queue_declare(queue=QUEUE_NAME)
-    #
-    # channel.basic_publish(exchange='', routing_key='hello', body='Hello World!')
-    # print(" [x] Sent 'Hello World!'")
-    # connection.close()
+def send_message_to_queue(link: models.Link):
+    connection = pika.BlockingConnection(pika.URLParameters(os.environ['RABBITMQ_URL']))
+    channel = connection.channel()
+    channel.queue_declare(queue=QUEUE_NAME)
+
+    web_request_body = {
+        'id': str(link.id),
+        'url': link.url
+    }
+    body_str = json.dumps(web_request_body)
+    body_bytes = bytes(body_str, 'utf-8')
+
+    channel.basic_publish(exchange='', routing_key=QUEUE_NAME, body=body_bytes)
+    connection.close()
