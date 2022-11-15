@@ -1,9 +1,9 @@
 version: "3.9"
 services:
-  main:
+  main_1:
     build: main/.
-    ports:
-      - "8080:8000"
+#    ports:
+#      - "8080:8000"
     depends_on:
       - db
     links:
@@ -11,19 +11,33 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:root@db/PythonProj
       RABBITMQ_URL: amqp://myuser:myuserpassword@rabbit:5672/%2F
+      NAME: main_1
+
+  main_2:
+    build: main/.
+    #    ports:
+    #      - "8080:8000"
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:root@db/PythonProj
+      RABBITMQ_URL: amqp://myuser:myuserpassword@rabbit:5672/%2F
+      NAME: main_2
 
   loader:
     build: loader/.
     restart: on-failure
     depends_on:
       - rabbit
-      - main
+      - nginx
     links:
       - rabbit
-      - main
+      - nginx
     environment:
       RABBITMQ_URL: amqp://myuser:myuserpassword@rabbit:5672/%2F
-      WEB_BASE_URL: http://main:8000
+      WEB_BASE_URL: http://nginx:80
 
   db:
     image: postgres:14.5
@@ -54,5 +68,15 @@ services:
       timeout: 10s
       retries: 10
 
+  nginx:
+    build: nginx/.
+    ports:
+      - "8080:80"
+    depends_on:
+      - main_1
+      - main_2
+    links:
+      - main_1
+      - main_2
 volumes:
   dbdata:
