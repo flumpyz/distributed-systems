@@ -32,12 +32,15 @@ services:
     depends_on:
       - rabbit
       - nginx
+      - redis
     links:
       - rabbit
       - nginx
+      - redis
     environment:
       RABBITMQ_URL: amqp://myuser:myuserpassword@rabbit:5672/%2F
       WEB_BASE_URL: http://nginx:80
+      CACHE_HOST: redis
 
   db:
     image: postgres:14.5
@@ -78,5 +81,9 @@ services:
     links:
       - main_1
       - main_2
+
+  redis:
+    image: redis
+
 volumes:
   dbdata:
