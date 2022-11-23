@@ -24,7 +24,7 @@ def get_from_cache(cache_key: str) -> Optional[int]:
 
 
 def set_cache(cache_key: str, status_code: int) -> None:
-    cache.set(cache_key, status_code, ex=10)
+    cache.set(cache_key, status_code, ex=600)
 
 
 def get_status(url: str) -> int:
